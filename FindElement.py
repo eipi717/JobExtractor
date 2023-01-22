@@ -117,4 +117,5 @@ def MultiProcessorExtractor(search_word):
 
 if __name__ == '__main__':
     search_word = sys.argv[1]
+    print("Test")
     MultiProcessorExtractor(search_word)
