@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from Config import config
 from Driver.InitDriver import initDriver
 from Enum.ExtractItemEnum import ExtractedJobEnum, JobSource
+import csv
 
 current_time = datetime.now().strftime("%Y_%m_%d")
 logging.basicConfig(filename=f'./log/JobExtractor_{current_time}.log',
@@ -114,7 +115,16 @@ def MultiProcessorExtractor(search_word):
         p2 = pool.apply_async(extractJobInGlassdoor, args=(str(search_word),))
         return p1.get() + p2.get()
 
+def WriteToCSV(result_list):
+    logging.info(f'[CSV Writer] Start writing to csv..')
+    with open(csv_output_path, 'w') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Company', 'role', 'source', 'url'])
+        for i in result_list:
+            writer.writerow(i.values())
+        logging.info(f"[CSV Writer] Write to CSV success!")
 
 if __name__ == '__main__':
     search_word = sys.argv[1]
-    MultiProcessorExtractor(search_word)
+    csv_output_path = sys.argv[2]
+    WriteToCSV(MultiProcessorExtractor(search_word))
